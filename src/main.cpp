@@ -1,15 +1,9 @@
 #include <iostream>
 #include "TGAImage/tgaimage.h"
 
-
 const TGAColor black = TGAColor(0, 0, 0, 255);
 const TGAColor white = TGAColor(255, 255, 255, 255);
 const TGAColor red = TGAColor(255, 0, 0, 255);
-
-struct Color {
-	const TGAColor black = TGAColor(0, 0, 0, 255);
-	const TGAColor red = TGAColor(255, 0, 0, 255);
-};
 
 int main(int argc, char *argv[]) {
 	auto image = TGAImage(300, 300, TGAImage::RGB);
@@ -21,7 +15,4 @@ int main(int argc, char *argv[]) {
 		}
 	
 	image.write_tga_file("result.tga");
-	
-	std::cout << "Hello Easy C++ project!" << std::endl;
-	std::cout << image.get_height() << ", " << image.get_width() << std::endl;
 }
