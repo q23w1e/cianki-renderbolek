@@ -1,10 +1,10 @@
 #include <iostream>
 #include "TGAImage/tgaimage.h"
 
-const TGAColor black = TGAColor(0, 0, 0, 255);
-const TGAColor white = TGAColor(255, 255, 255, 255);
-const TGAColor red = TGAColor(255, 0, 0, 255);
-const TGAColor green = TGAColor(0, 255, 0, 255);
+const TGAColor black {0, 0, 0, 255};
+const TGAColor white {255, 255, 255, 255};
+const TGAColor red   {255, 0, 0, 255};
+const TGAColor green {0, 255, 0, 255};
 
 struct Point { 
 	int x; 
