@@ -29,13 +29,13 @@ void dda(int x1, int y1, int x2, int y2, const TGAColor& color) {
 	int dx = x2 - x1;
 	int dy = y2 - y1;
 
-	int dp = dx > dy ? dx : dy;
-	if (dp == 0) { canvas.set(x1, x2, color); return; }
+	int steps = dx > dy ? dx : dy;
+	float xi = dx / (float)(steps);
+	float yi = dy / (float)(steps);
 
-	float step = 1.0 / dp;
-	for(size_t i = 0; i < dp; i++) {
-		int x = lerp(x1, x2, i * step);
-		int y = lerp(y1, y2, i * step);
+	for(auto i = 0; i < steps; i++) {
+		int x = x1 + (xi * i);
+		int y = y1 + (yi * i);
 		canvas.set(x, y, color);
 	}
 }
