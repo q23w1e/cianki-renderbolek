@@ -1,4 +1,6 @@
 #include <iostream>
+#include <utility>
+
 #include "TGAImage/tgaimage.h"
 
 const TGAColor black {0, 0, 0, 255};
@@ -6,57 +8,47 @@ const TGAColor white {255, 255, 255, 255};
 const TGAColor red   {255, 0, 0, 255};
 const TGAColor green {0, 255, 0, 255};
 
+TGAImage canvas {500, 500, TGAImage::RGB};
+
 struct Point { 
 	int x; 
 	int y;
 	TGAColor color;
 };
 
-void drawLineSegment(TGAImage& image, const Point& p1, const Point& p2) {
-	const Point* begin;
-	const Point* end; 
+int lerp(int a, int b, float t) {
+	return (1 - t) * a + t * b;
+}
 
-	if (p1.x > p2.x || p1.y > p2.y) {
-		begin = &p2;
-		end = &p1;
-	} else {
-		begin = &p1;
-		end = &p2;
+void dda(int x1, int y1, int x2, int y2, const TGAColor& color) {
+	if (x1 > x2 || y1 > y2) {
+		std::swap(x1, x2);
+		std::swap(y1, y2);
 	}
 
-	int dx = end->x - begin->x;
-	int dy = end->y - begin->y;
+	int dx = x2 - x1;
+	int dy = y2 - y1;
 
 	int dp = dx > dy ? dx : dy;
-	if (dp == 0) {
-		image.set(begin->x, begin->y, p1.color);
-		return;
-	}
+	if (dp == 0) { canvas.set(x1, x2, color); return; }
 
 	float step = 1.0 / dp;
 	for(size_t i = 0; i < dp; i++) {
-		int x = begin->x * (1 - i * step) + (i * step) * end->x;
-		int y = begin->y * (1 - i * step) + (i * step) * end->y;
-		image.set(x, y, p1.color);
+		int x = lerp(x1, x2, i * step);
+		int y = lerp(y1, y2, i * step);
+		canvas.set(x, y, color);
 	}
 }
 
 int main(int argc, char *argv[]) {
-	TGAImage image {500, 500, TGAImage::RGB};
-
 	Point p1 {100, 150, red};
 	Point p2 {300, 250, red};
-	drawLineSegment(image, p1, p2);
+	dda(p1.x, p1.y, p2.x, p2.y, p1.color);
 	
-	Point p3 {400, 200, white};
-	Point p4 {200, 100, white};
-	drawLineSegment(image, p3, p4);
+	Point p3 {400, 0, white};
+	Point p4 {450, 500, white};
+	dda(p3.x, p3.y, p4.x, p4.y, p3.color);
 
-	Point p5 {499, 499, green};
-	Point p6 {499, 499, green};
-	drawLineSegment(image, p5, p6);
-
-
-	image.flip_vertically();
-	image.write_tga_file("result.tga");
+	canvas.flip_vertically();
+	canvas.write_tga_file("result.tga");
 }
