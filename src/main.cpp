@@ -66,27 +66,57 @@ void line(int x1, int y1, int x2, int y2, const TGAColor& color, TGAImage& canva
 	}
 }
 
+void arc8(int r, const TGAColor& color, TGAImage& canvas) {
+	int x = 0, 
+		y = r, 
+		u = 1, // diff between to successive points on x (2*x + 1)
+		v = 2 * y - 1, // diff between to successive points on y (2*y - 1)
+		E = 0; // error (x^2 + y^2 - r^2)
+
+	while (x <= y) {
+		canvas.set(x, y, color);
+		
+		x += 1; E += u; u += 2;
+	
+		if (v < 2 * E) { y -= 1; E -= v; v -= 2; }
+	}
+}
+
+
+void circle(int Cx, int Cy, int r, const TGAColor& color, TGAImage& canvas) {
+	int x = 0, 
+		y = r, 
+		u = 1, // diff between to successive points on x (2*x + 1)
+		v = 2 * y - 1, // diff between to successive points on y (2*y - 1)
+		E = 0; // error (x^2 + y^2 - r^2)
+
+	while (x <= y) {
+		canvas.set(Cx + x, Cy + y, color);
+		canvas.set(Cx - x, Cy + y, color);
+		canvas.set(Cx + x, Cy - y, color);
+		canvas.set(Cx - x, Cy - y, color);
+		
+		if (x > y) {
+			std::cout << "Stop" << std::endl;
+			break;
+		}
+		canvas.set(Cy + y, Cx + x, color);
+		canvas.set(Cy - y, Cx + x, color);
+		canvas.set(Cy + y, Cx - x, color);
+		canvas.set(Cy - y, Cx - x, color);
+
+		x += 1; E += u; u += 2;
+	
+		if (v < 2 * E) { y -= 1; E -= v; v -= 2; }
+	}
+}
+
 int main(int argc, char *argv[]) {
 	TGAImage canvas {500, 500, TGAImage::RGB};
 	int width = canvas.get_width();
 	int height = canvas.get_height();
 	
-	auto model = Model("../obj/african_head.obj");
-
-	for (auto i = 0; i < model.nfaces(); i++) {
-		std::vector<int> face = model.face(i);
-
-		for (auto j = 0; j < face.size(); j++) {
-			auto v1 = model.vert(face[j]);
-			auto v2 = model.vert(face[(j + 1) % face.size()]);
-
-			int x1 = (v1.x + 1.0) * width / 2.0;
-			int y1 = (v1.y + 1.0) * height / 2.0;
-			int x2 = (v2.x + 1.0) * width / 2.0;
-			int y2 = (v2.y + 1.0) * height / 2.0;
-			line(x1, y1, x2, y2, white, canvas);
-		}
-	}
+	circle(width / 2, height / 2, 100, red, canvas);
 
 	canvas.flip_vertically();
 	canvas.write_tga_file("result.tga");
