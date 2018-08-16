@@ -9,6 +9,7 @@ const TGAColor black {0, 0, 0, 255};
 const TGAColor white {255, 255, 255, 255};
 const TGAColor red   {255, 0, 0, 255};
 const TGAColor green {0, 255, 0, 255};
+const TGAColor blue {0, 0, 255, 255};
 
 int lerp(int a, int b, float t) {
 	return (1 - t) * a + t * b;
@@ -66,6 +67,29 @@ void line(int x1, int y1, int x2, int y2, const TGAColor& color, TGAImage& canva
 	}
 }
 
+void lineMidPoint(int x1, int y1, int x2, int y2, const TGAColor& color, TGAImage& canvas) {
+	int dx = x2 - x1;
+	int dy = y2 - y1;
+	int e = 2 * dy - dx; // e = 2f in order to use only integer arithmetic
+
+	int midX = x1 + dx / 2;
+	bool mid_is_odd = midX % 2;
+	int midY = dy / 2;
+	
+	int incrX = x1, incrY = y1, 
+		decrX = x2, decrY = y2;
+
+	while (incrX < midX) {
+		canvas.set(incrX++, incrY, white);
+		canvas.set(decrX--, decrY, red);
+
+		if (e > 0) { e += 2 * (dy - dx); incrY++; decrY--; }
+		else { e += 2 * dy; }
+	}
+	canvas.set(incrX, incrY, green);
+	if (mid_is_odd) { canvas.set(decrX, decrY, blue); }
+}
+
 void arc8(int r, const TGAColor& color, TGAImage& canvas) {
 	int x = 0, 
 		y = r, 
@@ -116,7 +140,10 @@ int main(int argc, char *argv[]) {
 	int width = canvas.get_width();
 	int height = canvas.get_height();
 	
-	circle(width / 2, height / 2, 100, red, canvas);
+	// circle(width / 2, height / 2, 100, red, canvas);
+	// lineMidPoint(102, 102, 200, 200, white, canvas);
+	lineMidPoint(250, 250, 253, 253, green, canvas);
+	lineMidPoint(260, 260, 264, 264, green, canvas);
 
 	canvas.flip_vertically();
 	canvas.write_tga_file("result.tga");
