@@ -140,11 +140,6 @@ int main(int argc, char *argv[]) {
 	int width = canvas.get_width();
 	int height = canvas.get_height();
 	
-	// circle(width / 2, height / 2, 100, red, canvas);
-	// lineMidPoint(102, 102, 200, 200, white, canvas);
-	lineMidPoint(250, 250, 253, 253, green, canvas);
-	lineMidPoint(260, 260, 264, 264, green, canvas);
-
 	canvas.flip_vertically();
 	canvas.write_tga_file("result.tga");
 }
